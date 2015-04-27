@@ -1,12 +1,37 @@
-BUTTON_THRESHOLD=1
+# Defaults for sleepi-monitor initscript
+# sourced by /etc/init.d/sleepi-monitor
 
+#
+# Execute BUTTON_ACTION if the SW1 is pressed more than BUTTON_THRESHOLD
+#
+# BUTTON_THRESHOLD=0: disabled
+# BUTTON_THRESHOLD=N: N[1..255] seconds
+#
+BUTTON_THRESHOLD=1
 BUTTON_ACTION="shutdown -h now"
 
-VOLTAGE_THRESHOLD=10800
-
+#
+# Execute VOLTAGE_ACTION if the input voltage drops below VOLTAGE_THRESHOLD
+#
+# VOLTAGE_THRESHOLD=0: disabled
+# VOLTAGE_THRESHOLD=N: N[1..65535] mV
+#
+VOLTAGE_THRESHOLD=0
 VOLTAGE_ACTION="shutdown -h now"
 
-HEATBEAT_TIMEOUT=30
+#
+# Reboot if the heartbeat is not received more than HEARTBEAT_TIMEOUT
+#
+# HEARTBEAT_TIMEOUT=0: disabled
+# HEARTBEAT_TIMEOUT=N: N[1..255] seconds
+#
+HEARTBEAT_TIMEOUT=30
 
+#
+# Time to power off after shutdown
+#
+# SHUTDOWN_DELAY=0: disabled
+# SHUTDOWN_DELAY=N: N[1..255] seconds
+#
 SHUTDOWN_DELAY=5
 

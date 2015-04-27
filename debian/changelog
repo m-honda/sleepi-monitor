@@ -1,3 +1,10 @@
+sleepi-monitor (0.1-2) unstable; urgency=low
+
+  * Fix typo
+  * Modify defaults description
+
+ -- Masahiro Honda <honda@mechatrax.com>  Mon, 27 Apr 2015 11:31:05 +0000
+
 sleepi-monitor (0.1-1) unstable; urgency=low
 
   * Initial release

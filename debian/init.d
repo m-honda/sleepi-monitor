@@ -45,7 +45,7 @@ done
 #
 do_start()
 {
-	sleepictl --set timeout $HEATBEAT_TIMEOUT || return 2
+	sleepictl --set timeout $HEARTBEAT_TIMEOUT || return 2
 	sleepictl --set restart 1 || return 2
 	# Return
 	#   0 if daemon has been started

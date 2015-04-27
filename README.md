@@ -41,7 +41,7 @@ slee-Pi でシステムの監視を行うためのツール類を提供します
     電源電圧が VOLTAGE_THRESHOLD を下回った場合に実行されるコマンドです。  
     デフォルトは "shutdown -h now" です。
     
-  + HEATBEAT_TIMEOUT  
+  + HEARTBEAT_TIMEOUT  
     システムの応答がない場合に電源を再投入するまでの時間です。  
     単位は [秒] です。  
     無効にするには 0 を指定します。  
