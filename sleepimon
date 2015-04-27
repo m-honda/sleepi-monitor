@@ -1,0 +1,72 @@
+#!/usr/bin/ruby
+
+require 'open3'
+
+Process.daemon if ARGV.any? { |v| v == '-D' }
+
+SLEEPICTL_PATH = '/usr/sbin/sleepictl'
+
+def get_result(command)
+  if command == "" then
+    fail
+  end
+
+  o, e, s = Open3.capture3(command)
+  if s != 0 then
+    raise e
+  end
+
+  return o
+end
+
+class PmMonitor
+  @name = ""
+
+  def initialize(name = "")
+    @name = name
+    @action = ENV["#{@name.upcase}_ACTION"]
+    @threshold = ENV["#{@name.upcase}_THRESHOLD"]
+  end
+
+  def action
+    get_result(@action)
+  end
+
+  def get
+    return get_result(SLEEPICTL_PATH + ' --get ' + @name)
+  end
+end
+
+class ButtonMonitor < PmMonitor
+  def initialize
+    super('button')
+  end
+  def trigger
+    return @threshold != nil && @threshold != 0 && self.get >= @threshold
+  end
+end
+
+class VoltageMonitor < PmMonitor
+  def initialize
+    super('voltage')
+  end
+  def trigger
+    return @threshold != nil && @threshold != 0 && self.get < @threshold
+  end
+end
+
+monitors = [ ButtonMonitor.new, VoltageMonitor.new ]
+
+loop do
+  last = Time.now
+
+  monitors.each do |m| 
+    if m.trigger then
+      m.action
+    end
+  end
+
+  delta = Time.now - last
+  sleep(1.0 - delta)
+end
+

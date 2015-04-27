@@ -1,0 +1,12 @@
+Source: sleepi-monitor
+Section: unknown
+Priority: extra
+Maintainer: Masahiro Honda <honda@mechatrax.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: http://www.mechatrax.com/
+
+Package: sleepi-monitor
+Architecture: all
+Depends: ${misc:Depends}, sleepi-utils (>= 0.1), ruby (>= 1:1.9.3)
+Description: Monitoring daemon for slee-Pi
