@@ -1,3 +1,11 @@
+sleepi-monitor (0.2-1) unstable; urgency=medium
+
+  * Fix init script
+  * Modify sleepimon
+    - fix thresold comparison
+
+ -- Masahiro Honda <honda@mechatrax.com>  Wed, 30 Mar 2016 04:16:15 +0000
+
 sleepi-monitor (0.1-2) unstable; urgency=low
 
   * Fix typo

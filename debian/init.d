@@ -6,7 +6,7 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: slee-Pi monitor
-# Description:       slee-Pi monitoring daemon package
+# Description:       slee-Pi monitoring daemon
 ### END INIT INFO
 
 # Author: Masahiro Honda <honda@mechatrax.com>
@@ -15,10 +15,9 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="sleepi-monitor"
+DESC="slee-Pi monitoring daemon"
 NAME=sleepi-monitor
 DAEMON=/usr/sbin/sleepimon
-DAEMON_ARGS="-D"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -45,29 +44,20 @@ done
 #
 do_start()
 {
-	sleepictl --set timeout $HEARTBEAT_TIMEOUT || return 2
-	sleepictl --set restart 1 || return 2
 	# Return
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
-		|| return 1
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
-		$DAEMON_ARGS \
-		|| return 2
-	# The above code will not work for interpreted scripts, use the next
-	# six lines below instead (Ref: #643337, start-stop-daemon(8) )
-	#start-stop-daemon --start --quiet --pidfile $PIDFILE --startas $DAEMON \
-	#	--name $NAME --test > /dev/null \
-	#	|| return 1
-	#start-stop-daemon --start --quiet --pidfile $PIDFILE --startas $DAEMON \
-	#	--name $NAME -- $DAEMON_ARGS \
-	#	|| return 2
 
-	# Add code here, if necessary, that waits for the process to be ready
-	# to handle requests from services started subsequently which depend
-	# on this one.  As a last resort, sleep for some time.
+	sleepictl --set timeout $HEARTBEAT_TIMEOUT || return 2
+	sleepictl --set restart 1 || return 2
+
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON \
+		--test > /dev/null \
+		|| return 1
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON \
+		--make-pidfile --background \
+		|| return 2
 }
 
 #
@@ -75,25 +65,17 @@ do_start()
 #
 do_stop()
 {
-	sleepictl --set restart 0 || return 2
-	sleepictl --set timeout $SHUTDOWN_DELAY || return 2
 	# Return
 	#   0 if daemon has been stopped
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+
+	sleepictl --set restart 0 || return 2
+	sleepictl --set timeout $SHUTDOWN_DELAY || return 2
+
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
 	RETVAL="$?"
-	[ "$RETVAL" = 2 ] && return 2
-	# Wait for children to finish too if this is a daemon that forks
-	# and if the daemon is only ever run from this initscript.
-	# If the above conditions are not satisfied then add some other code
-	# that waits for the process to drop all resources that could be
-	# needed by services started subsequently.  A last resort is to
-	# sleep for some time.
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
-	[ "$?" = 2 ] && return 2
-	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	return "$RETVAL"
 }
@@ -107,7 +89,7 @@ do_reload() {
 	# restarting (for example, when it is sent a SIGHUP),
 	# then implement that here.
 	#
-	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE
 	return 0
 }
 
