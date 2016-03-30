@@ -25,15 +25,15 @@ class PmMonitor
   def initialize(name = "")
     @name = name
     @action = ENV["#{@name.upcase}_ACTION"]
-    @threshold = ENV["#{@name.upcase}_THRESHOLD"]
+    @threshold = ENV["#{@name.upcase}_THRESHOLD"].to_i
   end
 
   def action
     get_result(@action)
   end
 
-  def get
-    return get_result(SLEEPICTL_PATH + ' --get ' + @name)
+  def count
+    return get_result(SLEEPICTL_PATH + ' --get ' + @name).to_i
   end
 end
 
@@ -42,7 +42,7 @@ class ButtonMonitor < PmMonitor
     super('button')
   end
   def trigger
-    return @threshold != nil && @threshold != 0 && self.get >= @threshold
+    return @threshold != nil && @threshold != 0 && self.count >= @threshold
   end
 end
 
@@ -51,7 +51,7 @@ class VoltageMonitor < PmMonitor
     super('voltage')
   end
   def trigger
-    return @threshold != nil && @threshold != 0 && self.get < @threshold
+    return @threshold != nil && @threshold != 0 && self.count < @threshold
   end
 end
 
